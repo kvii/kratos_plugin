@@ -1,10 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'errors.g.dart';
-
 /// Kratos 错误类型。在调用 http 接口时，若响应码非 200 则
 /// 响应体一定是该类型的 json 数据。
-@JsonSerializable()
 class KratosError {
   const KratosError({
     required this.code,
@@ -28,8 +23,20 @@ class KratosError {
   final Map<String, String> metadata;
 
   factory KratosError.fromJson(Map<String, dynamic> json) {
-    return _$KratosErrorFromJson(json);
+    return KratosError(
+      code: json['code'] as int,
+      reason: json['reason'] as String,
+      message: json['message'] as String,
+      metadata: Map<String, String>.from(json['metadata'] as Map),
+    );
   }
 
-  Map<String, dynamic> toJson() => _$KratosErrorToJson(this);
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'code': code,
+      'reason': reason,
+      'message': message,
+      'metadata': metadata,
+    };
+  }
 }
