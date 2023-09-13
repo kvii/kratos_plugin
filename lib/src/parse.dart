@@ -1,7 +1,9 @@
 import 'package:path/path.dart' as p;
 
 /// 将 [arg] "拍平"。[arg] 期望为 message 类型生成的 json 对象。
+///
 /// 由于参数期望层数很低，所以用递归实现。
+///
 /// 返回 map 的值类型为 String | List<String>
 Map<String, dynamic> flatArg(Map<String, dynamic> arg) {
   final out = <String, dynamic>{};
@@ -28,7 +30,9 @@ void _flat(Map<String, dynamic> arg, Map<String, dynamic> out, String pre) {
 }
 
 /// 路由参数解析。
+///
 /// [path] 为路径参数模板。
+///
 /// [arg] 为请求参数，子类型已经被压缩成类似 "foo.bar" 的格式。
 ///
 /// 本函数只支持以下语法规则：
@@ -54,7 +58,11 @@ String parsePathTemplate(String path, Map<String, dynamic> arg) {
   for (final e in list) {
     final v = RegExp(r'^{(.+)}$').firstMatch(e)?.group(1);
     if (v != null) {
-      parts.add(arg.remove(v) as String);
+      final String value = arg.remove(v);
+      if (value.isEmpty) {
+        throw ArgumentError('missing path variable: $v');
+      }
+      parts.add(value);
     } else {
       parts.add(e);
     }

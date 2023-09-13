@@ -4,8 +4,8 @@ import 'package:kratos_plugin/kratos_plugin.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('path encoding', () {
-    test('common case', () {
+  group('request arg', () {
+    test('from pattern', () {
       final req = RequestArg.fromPattern(
         HttpRule(
           kind: "get",
@@ -61,6 +61,22 @@ void main() {
 
       expect(req.url.toString(), '/hello/foo?addr=Earth');
       expect(req.body, {'age': 18});
+    });
+
+    test('missing path variable', () {
+      expect(
+        () => RequestArg.fromPattern(
+          HttpRule(
+            kind: 'get',
+            path: '/hello/{name}',
+            body: "",
+          ),
+          {
+            "name": "",
+          },
+        ),
+        throwsArgumentError,
+      );
     });
   });
 
